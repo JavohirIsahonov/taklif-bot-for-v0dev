@@ -48,6 +48,8 @@ const TRANSLATIONS = {
     suggestion: "✏️ Taklif",
     complaint: "⚠️ Shikoyat",
     back: "🔙 Orqaga",
+    sendMessageButton: "✉️ Xabar yuborish",
+    sendKeyboardHint: "‎",
     
     // Registration flow
     enterFullName: "📝 Ism familiyangizni kiriting:",
@@ -222,6 +224,8 @@ ${recentMessages}`,
     suggestion: "✏️ Предложение",
     complaint: "⚠️ Жалоба",
     back: "🔙 Назад",
+    sendMessageButton: "✉️ Отправить сообщение",
+    sendKeyboardHint: "‎",
     
     // Registration flow
     enterFullName: "📝 Введите ваше имя и фамилию:",
@@ -515,6 +519,17 @@ function showMainMenu(chatId, fullName, language = "uz") {
     },
   }
   bot.sendMessage(chatId, t.welcome(fullName), enhancedMainMenu)
+  // Also show persistent reply keyboard with send button
+  try {
+    bot.sendMessage(chatId, t.sendKeyboardHint, {
+      reply_markup: {
+        keyboard: [[{ text: t.sendMessageButton }]],
+        resize_keyboard: true,
+        one_time_keyboard: false,
+        selective: false,
+      },
+    })
+  } catch (_) {}
 }
 
 function getCategoryDescription(category, language = "uz") {
@@ -1183,6 +1198,18 @@ async function completeRegistration(chatId, userState) {
 
       bot.sendMessage(chatId, successMessage)
       showMainMenu(chatId, userState.fullName, language)
+      // Ensure reply keyboard is visible after success as well
+      try {
+        const tLang = TRANSLATIONS[language] || TRANSLATIONS.uz
+        bot.sendMessage(chatId, tLang.sendKeyboardHint, {
+          reply_markup: {
+            keyboard: [[{ text: tLang.sendMessageButton }]],
+            resize_keyboard: true,
+            one_time_keyboard: false,
+            selective: false,
+          },
+        })
+      } catch (_) {}
       userStates.set(chatId, { state: STATES.IDLE, fullName: userState.fullName, language: language })
     }
   } catch (error) {
