@@ -41,7 +41,7 @@ const TRANSLATIONS = {
     languageRussian: "🇷🇺 Русский",
     
     // Welcome messages
-    welcome: (name) => `👋 Xush kelibsiz, ${name}!\n\n🎓 USAT Universitet\nTaklif va shikoyatlar tizimi\n\nQuyidagilardan birini tanlang:`,
+    welcome: (name) => `👋 Hurmatli ${name}!\n\n🎓 Fan va texnologiyalar universitetining rasmiy botiga xush kelibsiz! Bu yerda siz o'z taklif va shikoyatlaringizni yuborishingiz mumkin:\n\nQuyidagilardan birini tanlang:`,
     welcomeRegistration: "Assalomu alaykum! Ro'yxatdan o'tish uchun ism familiyangizni kiriting:",
     
     // Main menu
@@ -117,8 +117,11 @@ const TRANSLATIONS = {
     },
     
     // Form messages
-    selectCategory: (type) => `📝 ${type} kategoriyasini tanlang:`,
-    enterMessage: (type) => `📝 Endi ${type}ingizni batafsil yozing (kamida 10 ta belgi):`,
+    selectCategory: (type) => `📝 ${type} qaysi mavzuda?`,
+    enterMessage: (type) => {
+      const tCap = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
+      return `📝 ${tCap}ingizni batafsil yozing (kamida 10 ta belgi):`;
+    },
     messageTooShort: "❌ Xabar juda qisqa. Kamida 10 ta belgi kiriting:",
     messageTooLong: "❌ Xabar juda uzun. Maksimal 1000 ta belgi:",
     
@@ -289,7 +292,10 @@ ${recentMessages}`,
     
     // Form messages
     selectCategory: (type) => `📝 Выберите категорию ${type}:`,
-    enterMessage: (type) => `📝 Теперь подробно опишите ваше ${type} (минимум 10 символов):`,
+    enterMessage: (type) => {
+      const tCap = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
+      return `📝 Подробно опишите ваше ${tCap} (минимум 10 символов):`;
+    },
     messageTooShort: "❌ Сообщение слишком короткое. Введите минимум 10 символов:",
     messageTooLong: "❌ Сообщение слишком длинное. Максимум 1000 символов:",
     
@@ -992,7 +998,7 @@ bot.on("callback_query", async (callbackQuery) => {
       const messageText = t.enterMessage(translatedType)
 
       bot.editMessageText(
-        `✅ Kategoriya: ${category}\n${description}\n\n${messageText}`,
+        `✅ Kategoriya: ${category}\n\n${messageText}`,
         {
           chat_id: chatId,
           message_id: messageId,

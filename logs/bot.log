@@ -1236,3 +1236,119 @@
 [2025-09-14T18:06:31.364Z] INFO: Mode: Online
 [2025-09-14T18:06:31.881Z] INFO: Starting data synchronization...
 [2025-09-14T18:06:31.883Z] INFO: Data synchronization completed
+[2025-09-14T18:11:15.010Z] INFO: Received SIGINT, shutting down gracefully...
+[2025-09-14T18:11:15.012Z] INFO: Sync manager stopped
+[2025-09-15T10:16:23.672Z] INFO: Initializing bot...
+[2025-09-15T10:16:23.675Z] INFO: API Base URL: https://usat-taklif-backend.onrender.com/api
+[2025-09-15T10:16:23.679Z] INFO: Bot Token: Set
+[2025-09-15T10:16:23.684Z] INFO: 📁 Local storage initialized
+[2025-09-15T10:16:25.142Z] INFO: ✅ API health check passed - online mode
+[2025-09-15T10:16:25.143Z] INFO: Starting sync manager with 5 minute intervals
+[2025-09-15T10:16:25.145Z] INFO: 🤖 Bot started successfully!
+[2025-09-15T10:16:25.147Z] INFO: Mode: Online
+[2025-09-15T10:16:25.609Z] INFO: Starting data synchronization...
+[2025-09-15T10:16:25.612Z] INFO: Data synchronization completed
+[2025-09-15T10:16:28.397Z] INFO: Received SIGINT, shutting down gracefully...
+[2025-09-15T10:16:28.401Z] INFO: Sync manager stopped
+[2025-09-15T10:16:33.812Z] INFO: Initializing bot...
+[2025-09-15T10:16:33.815Z] INFO: API Base URL: https://usat-taklif-backend.onrender.com/api
+[2025-09-15T10:16:33.815Z] INFO: Bot Token: Set
+[2025-09-15T10:16:33.816Z] INFO: 📁 Local storage initialized
+[2025-09-15T10:16:34.378Z] INFO: ✅ API health check passed - online mode
+[2025-09-15T10:16:34.379Z] INFO: Starting sync manager with 5 minute intervals
+[2025-09-15T10:16:34.381Z] INFO: 🤖 Bot started successfully!
+[2025-09-15T10:16:34.381Z] INFO: Mode: Online
+[2025-09-15T10:16:34.679Z] INFO: Starting data synchronization...
+[2025-09-15T10:16:34.681Z] INFO: Data synchronization completed
+[2025-09-15T10:16:41.146Z] INFO: Start command received | {"chatId":6355954239,"username":"afrafinn"}
+[2025-09-15T10:16:41.697Z] INFO: Existing user found | {"fullName":"isahonov javohir","chatId":6355954239,"language":"uz"}
+[2025-09-15T10:17:36.126Z] INFO: Callback query received | {"chatId":6355954239,"data":"suggestion"}
+[2025-09-15T10:17:41.548Z] INFO: Processing message in state: waiting_message_text | {"chatId":6355954239,"text":"salom salom salom"}
+[2025-09-15T10:17:46.232Z] INFO: Callback query received | {"chatId":6355954239,"data":"complaint"}
+[2025-09-15T10:17:48.490Z] INFO: Callback query received | {"chatId":6355954239,"data":"cat_sharoit"}
+[2025-09-15T10:18:03.454Z] INFO: Processing message in state: waiting_message_text | {"chatId":6355954239,"text":"yomonda yoqmadi xullas"}
+[2025-09-15T10:18:28.055Z] INFO: Start command received | {"chatId":6355954239,"username":"afrafinn"}
+[2025-09-15T10:18:29.685Z] INFO: Existing user found | {"fullName":"isahonov javohir","chatId":6355954239,"language":"uz"}
+[2025-09-15T10:20:24.035Z] INFO: Received SIGINT, shutting down gracefully...
+[2025-09-15T10:20:24.036Z] INFO: Sync manager stopped
+[2025-09-15T10:20:25.624Z] INFO: Initializing bot...
+[2025-09-15T10:20:25.627Z] INFO: API Base URL: https://usat-taklif-backend.onrender.com/api
+[2025-09-15T10:20:25.627Z] INFO: Bot Token: Set
+[2025-09-15T10:20:25.628Z] INFO: 📁 Local storage initialized
+[2025-09-15T10:20:27.368Z] INFO: ✅ API health check passed - online mode
+[2025-09-15T10:20:27.368Z] INFO: Starting sync manager with 5 minute intervals
+[2025-09-15T10:20:27.370Z] INFO: 🤖 Bot started successfully!
+[2025-09-15T10:20:27.370Z] INFO: Mode: Online
+[2025-09-15T10:20:27.766Z] INFO: Starting data synchronization...
+[2025-09-15T10:20:27.768Z] INFO: Data synchronization completed
+[2025-09-15T10:20:33.404Z] INFO: Start command received | {"chatId":6355954239,"username":"afrafinn"}
+[2025-09-15T10:20:33.937Z] INFO: Existing user found | {"fullName":"isahonov javohir","chatId":6355954239,"language":"uz"}
+[2025-09-15T10:25:29.100Z] INFO: Starting data synchronization...
+[2025-09-15T10:25:29.110Z] INFO: Data synchronization completed
+[2025-09-15T10:25:38.417Z] INFO: Received SIGINT, shutting down gracefully...
+[2025-09-15T10:25:38.418Z] INFO: Sync manager stopped
+[2025-09-15T10:25:39.816Z] INFO: Initializing bot...
+[2025-09-15T10:25:39.820Z] INFO: API Base URL: https://usat-taklif-backend.onrender.com/api
+[2025-09-15T10:25:39.823Z] INFO: Bot Token: Set
+[2025-09-15T10:25:39.824Z] INFO: 📁 Local storage initialized
+[2025-09-15T10:25:41.637Z] INFO: ✅ API health check passed - online mode
+[2025-09-15T10:25:41.638Z] INFO: Starting sync manager with 5 minute intervals
+[2025-09-15T10:25:41.639Z] INFO: 🤖 Bot started successfully!
+[2025-09-15T10:25:41.640Z] INFO: Mode: Online
+[2025-09-15T10:25:41.926Z] INFO: Starting data synchronization...
+[2025-09-15T10:25:41.928Z] INFO: Data synchronization completed
+[2025-09-15T10:25:45.964Z] INFO: Start command received | {"chatId":6355954239,"username":"afrafinn"}
+[2025-09-15T10:25:46.260Z] INFO: Existing user found | {"fullName":"isahonov javohir","chatId":6355954239,"language":"uz"}
+[2025-09-15T10:30:39.152Z] INFO: Received SIGINT, shutting down gracefully...
+[2025-09-15T10:30:39.153Z] INFO: Sync manager stopped
+[2025-09-15T10:30:50.730Z] INFO: Initializing bot...
+[2025-09-15T10:30:50.732Z] INFO: API Base URL: https://usat-taklif-backend.onrender.com/api
+[2025-09-15T10:30:50.733Z] INFO: Bot Token: Set
+[2025-09-15T10:30:50.734Z] INFO: 📁 Local storage initialized
+[2025-09-15T10:30:52.386Z] INFO: ✅ API health check passed - online mode
+[2025-09-15T10:30:52.387Z] INFO: Starting sync manager with 5 minute intervals
+[2025-09-15T10:30:52.389Z] INFO: 🤖 Bot started successfully!
+[2025-09-15T10:30:52.389Z] INFO: Mode: Online
+[2025-09-15T10:30:52.679Z] INFO: Starting data synchronization...
+[2025-09-15T10:30:52.681Z] INFO: Data synchronization completed
+[2025-09-15T10:31:00.680Z] INFO: Start command received | {"chatId":6355954239,"username":"afrafinn"}
+[2025-09-15T10:31:01.273Z] INFO: Existing user found | {"fullName":"isahonov javohir","chatId":6355954239,"language":"uz"}
+[2025-09-15T10:31:10.849Z] INFO: Initializing bot...
+[2025-09-15T10:31:10.851Z] INFO: API Base URL: https://usat-taklif-backend.onrender.com/api
+[2025-09-15T10:31:10.852Z] INFO: Bot Token: Set
+[2025-09-15T10:31:10.854Z] INFO: 📁 Local storage initialized
+[2025-09-15T10:31:11.452Z] INFO: ✅ API health check passed - online mode
+[2025-09-15T10:31:11.453Z] INFO: Starting sync manager with 5 minute intervals
+[2025-09-15T10:31:11.456Z] INFO: 🤖 Bot started successfully!
+[2025-09-15T10:31:11.457Z] INFO: Mode: Online
+[2025-09-15T10:31:11.744Z] INFO: Starting data synchronization...
+[2025-09-15T10:31:11.746Z] INFO: Data synchronization completed
+[2025-09-15T10:31:17.951Z] INFO: Start command received | {"chatId":6355954239,"username":"afrafinn"}
+[2025-09-15T10:31:18.436Z] INFO: Existing user found | {"fullName":"isahonov javohir","chatId":6355954239,"language":"uz"}
+[2025-09-15T10:31:34.075Z] INFO: Initializing bot...
+[2025-09-15T10:31:34.078Z] INFO: API Base URL: https://usat-taklif-backend.onrender.com/api
+[2025-09-15T10:31:34.079Z] INFO: Bot Token: Set
+[2025-09-15T10:31:34.081Z] INFO: 📁 Local storage initialized
+[2025-09-15T10:31:35.856Z] INFO: ✅ API health check passed - online mode
+[2025-09-15T10:31:35.857Z] INFO: Starting sync manager with 5 minute intervals
+[2025-09-15T10:31:35.891Z] INFO: 🤖 Bot started successfully!
+[2025-09-15T10:31:35.895Z] INFO: Mode: Online
+[2025-09-15T10:31:36.199Z] INFO: Starting data synchronization...
+[2025-09-15T10:31:36.202Z] INFO: Data synchronization completed
+[2025-09-15T10:31:39.272Z] INFO: Received SIGINT, shutting down gracefully...
+[2025-09-15T10:31:39.273Z] INFO: Sync manager stopped
+[2025-09-15T10:31:49.967Z] INFO: Initializing bot...
+[2025-09-15T10:31:49.970Z] INFO: API Base URL: https://usat-taklif-backend.onrender.com/api
+[2025-09-15T10:31:49.980Z] INFO: Bot Token: Set
+[2025-09-15T10:31:49.984Z] INFO: 📁 Local storage initialized
+[2025-09-15T10:31:50.432Z] INFO: Start command received | {"chatId":6355954239,"username":"afrafinn"}
+[2025-09-15T10:31:51.852Z] INFO: ✅ API health check passed - online mode
+[2025-09-15T10:31:51.855Z] INFO: Starting sync manager with 5 minute intervals
+[2025-09-15T10:31:51.859Z] INFO: 🤖 Bot started successfully!
+[2025-09-15T10:31:51.860Z] INFO: Mode: Online
+[2025-09-15T10:31:51.999Z] INFO: Existing user found | {"fullName":"isahonov javohir","chatId":6355954239,"language":"uz"}
+[2025-09-15T10:31:52.145Z] INFO: Starting data synchronization...
+[2025-09-15T10:31:52.147Z] INFO: Data synchronization completed
+[2025-09-15T10:31:57.535Z] INFO: Start command received | {"chatId":6355954239,"username":"afrafinn"}
+[2025-09-15T10:31:58.114Z] INFO: Existing user found | {"fullName":"isahonov javohir","chatId":6355954239,"language":"uz"}
+[2025-09-15T10:32:01.862Z] INFO: Received SIGINT, shutting down gracefully...
