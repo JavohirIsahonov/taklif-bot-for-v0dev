@@ -7,16 +7,13 @@ require("dotenv").config()
 const token = process.env.TELEGRAM_BOT_TOKEN
 const bot = new TelegramBot(token, { polling: true })
 
-// Initialize API client
 const API_BASE_URL = process.env.API_BASE_URL || "https://usat-taklif-backend.onrender.com/api"
 const apiClient = new APIClient(API_BASE_URL)
 
 
 
-// User states for conversation flow
 const userStates = new Map()
 
-// State constants
 const STATES = {
   IDLE: "idle",
   WAITING_LANGUAGE: "waiting_language",
@@ -27,15 +24,12 @@ const STATES = {
   WAITING_MESSAGE_TEXT: "waiting_message_text",
 }
 
-// Comprehensive translation system
 const TRANSLATIONS = {
   uz: {
-    // Language selection
     languageSelection: "🌍 Tilni tanlang",
     languageUzbek: "🇺🇿 O'zbek",
     languageRussian: "🇷🇺 Русский",
     
-    // Welcome messages
     welcome: (name) => `👋 Hurmatli ${name}!
 
 🎓 Fan va texnologiyalar universitetining rasmiy botiga xush kelibsiz! Bu yerda siz o'z taklif va shikoyatlaringizni yuborishingiz mumkin:
@@ -43,13 +37,11 @@ const TRANSLATIONS = {
 Quyidagilardan birini tanlang:`,
     welcomeRegistration: "Assalomu alaykum! Ro'yxatdan o'tish uchun ism familiyangizni kiriting:",
     
-    // Main menu
     suggestion: "✏️ Taklif",
     complaint: "⚠️ Shikoyat",
     back: "🔙 Orqaga",
     sendMessageButton: "✉️ Xabar yuborish",
     
-    // Registration flow
     enterFullName: "📝 Ism familiyangizni kiriting:",
     enterPhone: "📱 Telefon raqamingizni kiriting (+998XXXXXXX formatida):",
     selectCourse: "🎓 Kursni tanlang:",
@@ -57,15 +49,13 @@ Quyidagilardan birini tanlang:`,
     courseSelected: (course) => `✅ Kurs tanlandi: ${course}`,
     directionSelected: (direction) => `✅ Yo'nalish tanlandi: ${direction}`,
     registrationCompleting: "🎉 Ro'yxatdan o'tish yakunlanmoqda...",
-    registrationComplete: "✅ Ro'yxatdan o'tish muvaffaqiyatli yakunlandi!",
+    registrationComplete: "✅ Ro'yxatdan o'tish muvaffaqiyatli yakunlandi!\nQuyidagi \"✉️Xabar yuborish\" tugmasi orqali xabaringizni yuborishingiz mumkin!",
     
-    // Course options
     course1: "1-kurs",
     course2: "2-kurs", 
     course3: "3-kurs",
     course4: "4-kurs",
     
-    // Direction options
     directions: {
       dasturiy_injiniring: "Dasturiy injiniring",
       kompyuter_injiniringi: "Kompyuter injiniringi",
@@ -87,7 +77,6 @@ Quyidagilardan birini tanlang:`,
       ijtimoiy_ish: "Ijtimoiy ish"
     },
     
-    // Category options
     categories: {
       sharoit: "🏢 Sharoit",
       qabul: "📝 Qabul", 
@@ -98,7 +87,6 @@ Quyidagilardan birini tanlang:`,
       other: "❓ Boshqa sabab"
     },
     
-    // Category descriptions
     categoryDescriptions: {
       sharoit: "Bino, xonalar, jihozlar va infratuzilma bilan bog'liq masalalar",
       qabul: "Qabul jarayoni, hujjatlar va ro'yxatga olish masalalari",
@@ -109,13 +97,11 @@ Quyidagilardan birini tanlang:`,
       other: "Yuqoridagi kategoriyalarga kirmaydigan boshqa masalalar"
     },
     
-    // Message types
     messageTypes: {
       suggestion: "taklif",
       complaint: "shikoyat"
     },
     
-    // Form messages
     selectCategory: (type) => `📝 ${type} qaysi mavzuda?`,
     enterMessage: (type) => {
       const tCap = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
@@ -124,10 +110,8 @@ Quyidagilardan birini tanlang:`,
     messageTooShort: "❌ Xabar juda qisqa. Kamida 10 ta belgi kiriting:",
     messageTooLong: "❌ Xabar juda uzun. Maksimal 1000 ta belgi:",
     
-    // Success messages
     messageSubmitted: (type) => `✅ ${type}ingiz muvaffaqiyatli yuborildi!\n⏰ Holat: Ko'rib chiqilmoqda\n\nJavob 24-48 soat ichida beriladi.`,
     
-    // Error messages
     errorOccurred: "❌ Xatolik yuz berdi",
     invalidName: "❌ Ism faqat harflardan iborat bo'lishi kerak va kamida 2 ta so'zdan iborat bo'lishi kerak. Qaytadan kiriting:",
     invalidPhone: "❌ Telefon raqam noto'g'ri formatda. +998XXXXXXX formatida kiriting:",
@@ -136,7 +120,6 @@ Quyidagilardan birini tanlang:`,
     menuError: "❌ Xatolik yuz berdi. /start buyrug'ini bosib qaytadan urinib ko'ring.",
     callbackError: "❌ Xatolik yuz berdi. /menu buyrug'ini bosib qaytadan urinib ko'ring.",
     
-    // Commands
     commands: {
       start: "Botni ishga tushirish",
       help: "Yordam",
@@ -145,7 +128,6 @@ Quyidagilardan birini tanlang:`,
       menu: "Menyu"
     },
     
-    // Help text
     helpText: `🤖 Bot buyruqlari:
 
 /start - Botni ishga tushirish
@@ -159,11 +141,9 @@ Quyidagilardan birini tanlang:`,
 
 Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
     
-    // Navigation
     nextPage: "⏩ Keyingi sahifa",
     prevPage: "⏪ Oldingi sahifa",
     
-    // General
     pleaseRegister: "Ro'yxatdan o'tish uchun /start buyrug'ini bosing.",
     adminOnly: "❌ Bu buyruq faqat administratorlar uchun.",
     noUsers: "Foydalanuvchilar yo'q",
@@ -171,12 +151,10 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
   },
   
   ru: {
-    // Language selection
     languageSelection: "🌍 Выберите язык",
     languageUzbek: "🇺🇿 O'zbek",
     languageRussian: "🇷🇺 Русский",
     
-    // Welcome messages
     welcome: (name) => `👋 Добро пожаловать, ${name}!
 
 🎓 Добро пожаловать в официальный бот Университета науки и технологий! Здесь вы можете отправлять свои предложения и жалобы:
@@ -184,13 +162,11 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
 Выберите одно из:`,
     welcomeRegistration: "Здравствуйте! Для регистрации введите ваше имя и фамилию:",
     
-    // Main menu
     suggestion: "✏️ Предложение",
     complaint: "⚠️ Жалоба",
     back: "🔙 Назад",
     sendMessageButton: "✉️ Отправить сообщение",
     
-    // Registration flow
     enterFullName: "📝 Введите ваше имя и фамилию:",
     enterPhone: "📱 Введите номер телефона (+998XXXXXXX формат):",
     selectCourse: "🎓 Выберите курс:",
@@ -198,15 +174,13 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
     courseSelected: (course) => `✅ Курс выбран: ${course}`,
     directionSelected: (direction) => `✅ Направление выбрано: ${direction}`,
     registrationCompleting: "🎉 Регистрация завершается...",
-    registrationComplete: "✅ Регистрация успешно завершена!",
+    registrationComplete: "✅ Регистрация успешно завершена!\nВы можете отправить свое сообщение через кнопку \"✉️Отправить сообщение\" ниже!",
     
-    // Course options
     course1: "1-курс",
     course2: "2-курс",
     course3: "3-курс", 
     course4: "4-курс",
     
-    // Direction options
     directions: {
       dasturiy_injiniring: "Программная инженерия",
       kompyuter_injiniringi: "Компьютерная инженерия",
@@ -228,7 +202,6 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
       ijtimoiy_ish: "Социальная работа"
     },
     
-    // Category options
     categories: {
       sharoit: "🏢 Условия",
       qabul: "📝 Прием",
@@ -239,7 +212,6 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
       other: "❓ Другая причина"
     },
     
-    // Category descriptions
     categoryDescriptions: {
       sharoit: "Вопросы, связанные со зданиями, помещениями, оборудованием и инфраструктурой",
       qabul: "Вопросы процесса приема, документов и регистрации",
@@ -250,13 +222,11 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
       other: "Другие вопросы, не входящие в вышеперечисленные категории"
     },
     
-    // Message types
     messageTypes: {
       suggestion: "предложение",
       complaint: "жалоба"
     },
     
-    // Form messages
     selectCategory: (type) => `📝 Выберите категорию ${type}:`,
     enterMessage: (type) => {
       const tCap = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
@@ -265,10 +235,8 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
     messageTooShort: "❌ Сообщение слишком короткое. Введите минимум 10 символов:",
     messageTooLong: "❌ Сообщение слишком длинное. Максимум 1000 символов:",
     
-    // Success messages
     messageSubmitted: (type) => `✅ Ваше ${type} успешно отправлено!\n⏰ Статус: На рассмотрении\n\nОтвет будет дан в течение 24-48 часов.`,
     
-    // Error messages
     errorOccurred: "❌ Произошла ошибка",
     invalidName: "❌ Имя должно содержать только буквы и состоять минимум из 2 слов. Введите заново:",
     invalidPhone: "❌ Неверный формат номера телефона. Введите в формате +998XXXXXXX:",
@@ -277,7 +245,6 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
     menuError: "❌ Произошла ошибка. Нажмите /start и попробуйте еще раз.",
     callbackError: "❌ Произошла ошибка. Нажмите /menu и попробуйте еще раз.",
     
-    // Commands
     commands: {
       start: "Запустить бота",
       help: "Помощь",
@@ -286,7 +253,6 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
       menu: "Меню"
     },
     
-    // Help text
     helpText: `🤖 Команды бота:
 
 /start - Запустить бота
@@ -300,7 +266,6 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
 
 Каждое обращение рассматривается администрацией университета.`,
     
-    // Status text
     statusText: (apiStatus, userCount, messageCount, syncStatus, isOfflineMode, time) => `🔧 Статус бота:
 
 🌐 Статус API: ${apiStatus.isOnline ? "✅ Online" : "❌ Offline"}
@@ -316,7 +281,6 @@ Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
 🤖 Бот: Работает
 ⏰ Время: ${time}`,
     
-    // Admin text
     adminText: (userCount, messageCount, apiStatus, isOfflineMode, recentUsers, recentMessages) => `👨‍💼 Админ панель:
 
 📊 Статистика:
@@ -331,11 +295,9 @@ ${recentUsers}
 💬 Последние сообщения (последние 3):
 ${recentMessages}`,
     
-    // Navigation
     nextPage: "⏩ Следующая страница",
     prevPage: "⏪ Предыдущая страница",
     
-    // General
     pleaseRegister: "Нажмите /start для регистрации.",
     adminOnly: "❌ Эта команда только для администраторов.",
     noUsers: "Нет пользователей",
@@ -343,7 +305,6 @@ ${recentMessages}`,
   }
 }
 
-// Language options
 const LANGUAGE_OPTIONS = {
   reply_markup: {
     inline_keyboard: [
@@ -355,7 +316,6 @@ const LANGUAGE_OPTIONS = {
   },
 }
 
-// Helper function to get course options based on language
 function getCourseOptions(language = "uz") {
   const t = TRANSLATIONS[language]
   return {
@@ -374,7 +334,6 @@ function getCourseOptions(language = "uz") {
   }
 }
 
-// Helper function to get direction options based on language and page
 function getDirectionOptions(language = "uz", page = 1) {
   const t = TRANSLATIONS[language]
   const directions = t.directions
@@ -430,7 +389,6 @@ function getDirectionOptions(language = "uz", page = 1) {
   }
 }
 
-// Helper function to get category options based on language
 function getCategoryOptions(language = "uz") {
   const t = TRANSLATIONS[language]
   const categories = t.categories
@@ -450,7 +408,6 @@ function getCategoryOptions(language = "uz") {
   }
 }
 
-// Show language selection
 function showLanguageSelection(chatId) {
   const message = `🌍 Tilni tanlang / Выберите язык
 
@@ -474,6 +431,8 @@ function showMainMenu(chatId, fullName, language = "uz") {
       ],
     },
   }
+  
+  // Send the main menu while preserving the persistent keyboard
   bot.sendMessage(chatId, t.welcome(fullName), enhancedMainMenu)
 }
 
@@ -481,7 +440,6 @@ function getCategoryDescription(category, language = "uz") {
   const t = TRANSLATIONS[language] || TRANSLATIONS.uz
   const descriptions = t.categoryDescriptions
   
-  // Map category names to translation keys
   const categoryMap = {
     "Sharoit": "sharoit",
     "Qabul": "qabul", 
@@ -490,7 +448,6 @@ function getCategoryDescription(category, language = "uz") {
     "Tyutor": "tutor",
     "Dekanat": "dekanat",
     "Boshqa sabab": "other",
-    // Russian mappings
     "Условия": "sharoit",
     "Прием": "qabul",
     "Учебный процесс": "dars", 
@@ -504,7 +461,6 @@ function getCategoryDescription(category, language = "uz") {
   return key ? descriptions[key] : ""
 }
 
-// Function to get category-specific message prompts
 function getCategorySpecificMessage(categoryData, language = "uz") {
   const messages = {
     uz: {
@@ -550,39 +506,32 @@ bot.onText(/\/start/, async (msg) => {
   try {
     let existingUser = null
 
-    // Try API first
     try {
       existingUser = await ErrorHandler.retryOperation(() => apiClient.checkUserExists(chatId), 2, 1000)
     } catch (apiError) {
-      // User doesn't exist, start with language selection
       showLanguageSelection(chatId)
       return
     }
 
     if (existingUser) {
-      // Update user activity
       apiClient.updateUserActivity(chatId)
 
-      // User exists, show main menu with their language
       const userLanguage = existingUser.language || "uz"
       showMainMenu(chatId, existingUser.fullName, userLanguage)
       userStates.set(chatId, { state: STATES.IDLE, fullName: existingUser.fullName, language: userLanguage })
     } else {
-      // User doesn't exist, start with language selection
       showLanguageSelection(chatId)
     }
   } catch (error) {
-    const t = TRANSLATIONS.uz // Default to Uzbek for error messages
+    const t = TRANSLATIONS.uz 
     bot.sendMessage(chatId, t.registrationError)
     userStates.set(chatId, { state: STATES.WAITING_NAME })
   }
 })
 
-// Help command handler
 bot.onText(/\/help/, async (msg) => {
   const chatId = msg.chat.id
   
-  // Try to get user's language preference
   let userLanguage = "uz"
   try {
     const existingUser = await apiClient.checkUserExists(chatId).catch(() => null)
@@ -590,7 +539,6 @@ bot.onText(/\/help/, async (msg) => {
       userLanguage = existingUser.language
     }
   } catch (error) {
-    // Default to Uzbek if can't determine language
   }
   
   const t = TRANSLATIONS[userLanguage] || TRANSLATIONS.uz
@@ -608,24 +556,41 @@ bot.onText(/\/menu/, async (msg) => {
       showMainMenu(chatId, existingUser.fullName, userLanguage)
       userStates.set(chatId, { state: STATES.IDLE, fullName: existingUser.fullName, language: userLanguage })
     } else {
-      const t = TRANSLATIONS.uz // Default to Uzbek for new users
+      const t = TRANSLATIONS.uz 
       bot.sendMessage(chatId, t.pleaseRegister)
     }
   } catch (error) {
-    const t = TRANSLATIONS.uz // Default to Uzbek for error messages
+    const t = TRANSLATIONS.uz 
     bot.sendMessage(chatId, t.menuError)
   }
 })
 
 
 
-// Handle text messages for registration flow
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id
   const text = msg.text
 
-  // Skip if it's a command
   if (text && text.startsWith("/")) {
+    return
+  }
+
+  // Check if user pressed the persistent "✉️Xabar yuborish" button
+  if (text && (text === "✉️Xabar yuborish" || text === "✉️Отправить сообщение")) {
+    try {
+      const existingUser = await apiClient.checkUserExists(chatId).catch(() => null)
+      if (existingUser) {
+        const userLanguage = existingUser.language || "uz"
+        showMainMenu(chatId, existingUser.fullName, userLanguage)
+        userStates.set(chatId, { state: STATES.IDLE, fullName: existingUser.fullName, language: userLanguage })
+      } else {
+        const t = TRANSLATIONS.uz
+        bot.sendMessage(chatId, t.pleaseRegister)
+      }
+    } catch (error) {
+      const t = TRANSLATIONS.uz
+      bot.sendMessage(chatId, t.menuError)
+    }
     return
   }
 
@@ -698,13 +663,13 @@ bot.on("message", async (msg) => {
           const userLanguage = existingUser.language || "uz"
           showMainMenu(chatId, existingUser.fullName, userLanguage)
         } else {
-          const t = TRANSLATIONS.uz // Default to Uzbek for new users
+          const t = TRANSLATIONS.uz
           bot.sendMessage(chatId, t.pleaseRegister)
         }
         break
     }
   } catch (error) {
-    const t = TRANSLATIONS.uz // Default to Uzbek for error messages
+    const t = TRANSLATIONS.uz 
     bot.sendMessage(chatId, t.menuError)
     userStates.delete(chatId)
   }
@@ -815,19 +780,17 @@ bot.on("callback_query", async (callbackQuery) => {
 
         setTimeout(async () => {
           await completeRegistration(chatId, userState)
-          // Delete the "yakunlanmoqda" message
           bot.deleteMessage(chatId, messageId).catch(() => {})
         }, 2000)
         return
       }
     }
 
-    // Handle main menu actions
     if (data === "suggestion") {
-      userState.ticketType = data // suggestion
+      userState.ticketType = data 
       userState.state = STATES.WAITING_MESSAGE_TEXT
-      userState.category = null // No category for suggestions
-      userState.substatus = null // No substatus for suggestions
+      userState.category = null 
+      userState.substatus = null 
 
       const language = userState.language || "uz"
       const t = TRANSLATIONS[language] || TRANSLATIONS.uz
@@ -844,7 +807,7 @@ bot.on("callback_query", async (callbackQuery) => {
     }
 
     if (data === "complaint") {
-      userState.ticketType = data // complaint
+      userState.ticketType = data 
       userState.state = STATES.WAITING_MESSAGE_TEXT
 
       const language = userState.language || "uz"
@@ -862,7 +825,6 @@ bot.on("callback_query", async (callbackQuery) => {
       return
     }
 
-    // Handle category selection
     if (data.startsWith("cat_")) {
       const language = userState.language || "uz"
       const t = TRANSLATIONS[language] || TRANSLATIONS.uz
@@ -885,7 +847,6 @@ bot.on("callback_query", async (callbackQuery) => {
       userState.category = category
       userState.substatus = substatus
 
-      // Get category-specific message based on selected category
       const categorySpecificMessage = getCategorySpecificMessage(data, language)
 
       bot.editMessageText(
@@ -900,7 +861,6 @@ bot.on("callback_query", async (callbackQuery) => {
       return
     }
 
-    // Handle help info
     if (data === "help_info") {
       const language = userState.language || "uz"
       const t = TRANSLATIONS[language] || TRANSLATIONS.uz
@@ -920,7 +880,6 @@ ${t.helpText}
       return
     }
 
-    // Handle back to menu
     if (data === "back_to_menu") {
       const existingUser = await apiClient.checkUserExists(chatId).catch(() => null)
       if (existingUser) {
@@ -946,7 +905,7 @@ ${t.helpText}
       return
     }
   } catch (error) {
-    const t = TRANSLATIONS.uz // Default to Uzbek for error messages
+    const t = TRANSLATIONS.uz 
     bot.sendMessage(chatId, t.callbackError)
   }
 })
@@ -995,8 +954,11 @@ async function handleMessageSubmission(chatId, userState, messageText) {
       bot.sendMessage(chatId, statusMessage)
 
       setTimeout(() => {
-        showMainMenu(chatId, userState.fullName, userState.language)
-        userStates.set(chatId, { state: STATES.IDLE, fullName: userState.fullName, language: userState.language })
+        // Show main menu after 0.5 seconds as per memory requirement
+        setTimeout(() => {
+          showMainMenu(chatId, userState.fullName, userState.language)
+          userStates.set(chatId, { state: STATES.IDLE, fullName: userState.fullName, language: userState.language })
+        }, 500)
       }, 2000)
     } else {
       const language = userState.language || "uz"
@@ -1058,8 +1020,20 @@ async function completeRegistration(chatId, userState) {
       const t = TRANSLATIONS[language] || TRANSLATIONS.uz
       const successMessage = t.registrationComplete
 
-      bot.sendMessage(chatId, successMessage)
-      showMainMenu(chatId, userState.fullName, language)
+      const persistentKeyboard = {
+        reply_markup: {
+          keyboard: [
+            [
+              { text: t.sendMessageButton }
+            ]
+          ],
+          resize_keyboard: true,
+          one_time_keyboard: false,
+          persistent: true
+        }
+      }
+
+      bot.sendMessage(chatId, successMessage, persistentKeyboard)
       userStates.set(chatId, { state: STATES.IDLE, fullName: userState.fullName, language: language })
     }
   } catch (error) {
