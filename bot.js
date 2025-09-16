@@ -1,22 +1,17 @@
 const TelegramBot = require("node-telegram-bot-api")
 const APIClient = require("./api/apiClient")
-const LocalStorage = require("./utils/localStorage")
-const SyncManager = require("./utils/syncManager")
 const ErrorHandler = require("./utils/errorHandler")
 const Validator = require("./utils/validator")
-const logger = require("./utils/logger")
 require("dotenv").config()
 
 const token = process.env.TELEGRAM_BOT_TOKEN
 const bot = new TelegramBot(token, { polling: true })
 
-// Initialize API client and local storage
+// Initialize API client
 const API_BASE_URL = process.env.API_BASE_URL || "https://usat-taklif-backend.onrender.com/api"
 const apiClient = new APIClient(API_BASE_URL)
-const localStorage = new LocalStorage()
-const syncManager = new SyncManager(apiClient, localStorage)
 
-let isOfflineMode = false
+
 
 // User states for conversation flow
 const userStates = new Map()
@@ -41,7 +36,11 @@ const TRANSLATIONS = {
     languageRussian: "🇷🇺 Русский",
     
     // Welcome messages
-    welcome: (name) => `👋 Hurmatli ${name}!\n\n🎓 Fan va texnologiyalar universitetining rasmiy botiga xush kelibsiz! Bu yerda siz o'z taklif va shikoyatlaringizni yuborishingiz mumkin:\n\nQuyidagilardan birini tanlang:`,
+    welcome: (name) => `👋 Hurmatli ${name}!
+
+🎓 Fan va texnologiyalar universitetining rasmiy botiga xush kelibsiz! Bu yerda siz o'z taklif va shikoyatlaringizni yuborishingiz mumkin:
+
+Quyidagilardan birini tanlang:`,
     welcomeRegistration: "Assalomu alaykum! Ro'yxatdan o'tish uchun ism familiyangizni kiriting:",
     
     // Main menu
@@ -49,7 +48,6 @@ const TRANSLATIONS = {
     complaint: "⚠️ Shikoyat",
     back: "🔙 Orqaga",
     sendMessageButton: "✉️ Xabar yuborish",
-    sendKeyboardHint: "‎",
     
     // Registration flow
     enterFullName: "📝 Ism familiyangizni kiriting:",
@@ -60,7 +58,6 @@ const TRANSLATIONS = {
     directionSelected: (direction) => `✅ Yo'nalish tanlandi: ${direction}`,
     registrationCompleting: "🎉 Ro'yxatdan o'tish yakunlanmoqda...",
     registrationComplete: "✅ Ro'yxatdan o'tish muvaffaqiyatli yakunlandi!",
-    registrationCompleteOffline: "✅ Ro'yxatdan o'tish muvaffaqiyatli yakunlandi! (Offline rejim - ma'lumotlar keyinroq sinxronlanadi)",
     
     // Course options
     course1: "1-kurs",
@@ -129,7 +126,6 @@ const TRANSLATIONS = {
     
     // Success messages
     messageSubmitted: (type) => `✅ ${type}ingiz muvaffaqiyatli yuborildi!\n⏰ Holat: Ko'rib chiqilmoqda\n\nJavob 24-48 soat ichida beriladi.`,
-    messageSubmittedOffline: (type) => `✅ ${type}ingiz qabul qilindi! (Offline rejim)\n\n📤 Xabar keyinroq yuboriladi.`,
     
     // Error messages
     errorOccurred: "❌ Xatolik yuz berdi",
@@ -163,48 +159,12 @@ const TRANSLATIONS = {
 
 Har bir murojaat universitet ma'muriyati tomonidan ko'rib chiqiladi.`,
     
-    // Status text
-    statusText: (apiStatus, userCount, messageCount, syncStatus, isOfflineMode, time) => `🔧 Bot Holati:
-
-🌐 API Holati: ${apiStatus.isOnline ? "✅ Online" : "❌ Offline"}
-📡 API URL: ${apiStatus.baseURL}
-🗂️ Rejim: ${isOfflineMode ? "Offline" : "Online"}
-
-📊 Mahalliy saqlash:
-👥 Foydalanuvchilar: ${userCount}
-💬 Xabarlar: ${messageCount}
-
-🔄 Sinxronlash: ${syncStatus.isRunning ? "✅ Ishlayapti" : "❌ To'xtatilgan"}
-
-🤖 Bot: Ishlayapti
-⏰ Vaqt: ${time}`,
-    
-    // Admin text
-    adminText: (userCount, messageCount, apiStatus, isOfflineMode, recentUsers, recentMessages) => `👨‍💼 Admin Panel:
-
-📊 Statistika:
-• Jami foydalanuvchilar: ${userCount}
-• Jami xabarlar: ${messageCount}
-• API holati: ${apiStatus.isOnline ? "Online" : "Offline"}
-• Bot rejimi: ${isOfflineMode ? "Offline" : "Online"}
-
-📁 So'nggi foydalanuvchilar (oxirgi 5):
-${recentUsers}
-
-💬 So'nggi xabarlar (oxirgi 3):
-${recentMessages}`,
-    
-    // Offline messages
-    offlineMode: "⚠️ Bot hozirda offline rejimda ishlayapti. Xabarlaringiz keyinroq yuboriladi.",
-    offlineModeMenu: "⚠️ Bot hozirda offline rejimda ishlayapti.",
-    
     // Navigation
     nextPage: "⏩ Keyingi sahifa",
     prevPage: "⏪ Oldingi sahifa",
     
     // General
     pleaseRegister: "Ro'yxatdan o'tish uchun /start buyrug'ini bosing.",
-    useMenu: "Menyu uchun /start buyrug'ini bosing yoki quyidagi tugmalardan foydalaning.",
     adminOnly: "❌ Bu buyruq faqat administratorlar uchun.",
     noUsers: "Foydalanuvchilar yo'q",
     noMessages: "Xabarlar yo'q"
@@ -217,7 +177,11 @@ ${recentMessages}`,
     languageRussian: "🇷🇺 Русский",
     
     // Welcome messages
-    welcome: (name) => `👋 Добро пожаловать, ${name}!\n\n🎓 USAT Университет\nСистема предложений и жалоб\n\nВыберите одно из:`,
+    welcome: (name) => `👋 Добро пожаловать, ${name}!
+
+🎓 Добро пожаловать в официальный бот Университета науки и технологий! Здесь вы можете отправлять свои предложения и жалобы:
+
+Выберите одно из:`,
     welcomeRegistration: "Здравствуйте! Для регистрации введите ваше имя и фамилию:",
     
     // Main menu
@@ -225,7 +189,6 @@ ${recentMessages}`,
     complaint: "⚠️ Жалоба",
     back: "🔙 Назад",
     sendMessageButton: "✉️ Отправить сообщение",
-    sendKeyboardHint: "‎",
     
     // Registration flow
     enterFullName: "📝 Введите ваше имя и фамилию:",
@@ -236,7 +199,6 @@ ${recentMessages}`,
     directionSelected: (direction) => `✅ Направление выбрано: ${direction}`,
     registrationCompleting: "🎉 Регистрация завершается...",
     registrationComplete: "✅ Регистрация успешно завершена!",
-    registrationCompleteOffline: "✅ Регистрация успешно завершена! (Офлайн режим - данные будут синхронизированы позже)",
     
     // Course options
     course1: "1-курс",
@@ -305,7 +267,6 @@ ${recentMessages}`,
     
     // Success messages
     messageSubmitted: (type) => `✅ Ваше ${type} успешно отправлено!\n⏰ Статус: На рассмотрении\n\nОтвет будет дан в течение 24-48 часов.`,
-    messageSubmittedOffline: (type) => `✅ Ваше ${type} принято! (Офлайн режим)\n\n📤 Сообщение будет отправлено позже.`,
     
     // Error messages
     errorOccurred: "❌ Произошла ошибка",
@@ -370,17 +331,12 @@ ${recentUsers}
 💬 Последние сообщения (последние 3):
 ${recentMessages}`,
     
-    // Offline messages
-    offlineMode: "⚠️ Бот сейчас работает в офлайн режиме. Ваши сообщения будут отправлены позже.",
-    offlineModeMenu: "⚠️ Бот сейчас работает в офлайн режиме.",
-    
     // Navigation
     nextPage: "⏩ Следующая страница",
     prevPage: "⏪ Предыдущая страница",
     
     // General
     pleaseRegister: "Нажмите /start для регистрации.",
-    useMenu: "Нажмите /start для меню или используйте кнопки ниже.",
     adminOnly: "❌ Эта команда только для администраторов.",
     noUsers: "Нет пользователей",
     noMessages: "Нет сообщений"
@@ -519,17 +475,6 @@ function showMainMenu(chatId, fullName, language = "uz") {
     },
   }
   bot.sendMessage(chatId, t.welcome(fullName), enhancedMainMenu)
-  // Also show persistent reply keyboard with send button
-  try {
-    bot.sendMessage(chatId, t.sendKeyboardHint, {
-      reply_markup: {
-        keyboard: [[{ text: t.sendMessageButton }]],
-        resize_keyboard: true,
-        one_time_keyboard: false,
-        selective: false,
-      },
-    })
-  } catch (_) {}
 }
 
 function getCategoryDescription(category, language = "uz") {
@@ -559,9 +504,48 @@ function getCategoryDescription(category, language = "uz") {
   return key ? descriptions[key] : ""
 }
 
+// Function to get category-specific message prompts
+function getCategorySpecificMessage(categoryData, language = "uz") {
+  const messages = {
+    uz: {
+      cat_sharoit: "🏢 Shikoyatingiz bino, xonalar, jihozlar va infratuzilma bilan bog'liq bo'lsa, u haqda batafsil yozing (kamida 10 ta belgi):",
+      
+      cat_qabul: "📝 Shikoyatingiz qabul jarayoni, hujjatlar va ro'yxatga olish bilan bog'liq bo'lsa, u haqda batafsil yozing (kamida 10 ta belgi):",
+      
+      cat_dars: "📚 Shikoyatingiz ta'lim sifati, dars jadvali va o'quv jarayoni bilan bog'liq bo'lsa, u haqda batafsil yozing. Bunda o'qituvchi ismi familiyasi, xona raqami, dars vaqti haqida tafsilotlarni yozishni unutmang (kamida 10 ta belgi):",
+      
+      cat_teacher: "👨‍🏫 Shikoyatingiz professor-o'qituvchilar bilan bog'liq bo'lsa, u haqda batafsil yozing. Bunda o'qituvchi ismi familiyasini ham yozishni unutmang (kamida 10 ta belgi):",
+      
+      cat_tutor: "🎓 Shikoyatingiz tyutorlar va ularning faoliyati bilan bog'liq bo'lsa, u haqda batafsil yozing. Bunda iloji bo'sa tyutorning ism familiyasini yozishni unutmang (kamida 10 ta belgi):",
+      
+      cat_dekanat: "🏛️ Shikoyatingiz ma'muriy masalalar, kafedra yoki dekanat xizmatlari bilan bog'liq bo'lsa, u haqda batafsil yozing (kamida 10 ta belgi):",
+      
+      cat_other: "❓ Shikoyatingiz haqida batafsil yozing. Masalani o'rganib chiqish uchun kerakli bo'lishi mumkin bo'lgan barcha tafsilotlarni ham yozishni unutmang (kamida 10 ta belgi):"
+    },
+    
+    ru: {
+      cat_sharoit: "🏢 Если ваша жалоба связана со зданиями, помещениями, оборудованием и инфраструктурой, подробно опишите её (минимум 10 символов):",
+      
+      cat_qabul: "📝 Если ваша жалоба связана с процессом приема, документами и регистрацией, подробно опишите её (минимум 10 символов):",
+      
+      cat_dars: "📚 Если ваша жалоба связана с качеством образования, расписанием и учебным процессом, подробно опишите её. Не забудьте указать имя и фамилию преподавателя, номер аудитории, время занятий (минимум 10 символов):",
+      
+      cat_teacher: "👨‍🏫 Если ваша жалоба связана с профессорско-преподавательским составом, подробно опишите её. Не забудьте указать имя и фамилию преподавателя (минимум 10 символов):",
+      
+      cat_tutor: "🎓 Если ваша жалоба связана с тьюторами и их деятельностью, подробно опишите её. По возможности укажите имя и фамилию тьютора (минимум 10 символов):",
+      
+      cat_dekanat: "🏛️ Если ваша жалоба связана с административными вопросами, кафедрой или услугами деканата, подробно опишите её (минимум 10 символов):",
+      
+      cat_other: "❓ Подробно опишите вашу жалобу. Не забудьте указать все детали, которые могут потребоваться для рассмотрения вопроса (минимум 10 символов):"
+    }
+  }
+  
+  const langMessages = messages[language] || messages.uz
+  return langMessages[categoryData] || langMessages.cat_other
+}
+
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id
-  logger.info("Start command received", { chatId, username: msg.from?.username })
 
   try {
     let existingUser = null
@@ -569,41 +553,25 @@ bot.onText(/\/start/, async (msg) => {
     // Try API first
     try {
       existingUser = await ErrorHandler.retryOperation(() => apiClient.checkUserExists(chatId), 2, 1000)
-      isOfflineMode = false
     } catch (apiError) {
-      logger.warn("API unavailable, checking local storage", { error: apiError.message })
-      existingUser = localStorage.findUser(chatId)
-      isOfflineMode = true
+      // User doesn't exist, start with language selection
+      showLanguageSelection(chatId)
+      return
     }
 
     if (existingUser) {
-      logger.info("Existing user found", { fullName: existingUser.fullName, chatId, language: existingUser.language })
-
       // Update user activity
-      if (!isOfflineMode) {
-        apiClient.updateUserActivity(chatId)
-      } else {
-        localStorage.updateUserActivity(chatId)
-      }
+      apiClient.updateUserActivity(chatId)
 
       // User exists, show main menu with their language
       const userLanguage = existingUser.language || "uz"
       showMainMenu(chatId, existingUser.fullName, userLanguage)
       userStates.set(chatId, { state: STATES.IDLE, fullName: existingUser.fullName, language: userLanguage })
-
-      if (isOfflineMode) {
-        const t = TRANSLATIONS[userLanguage] || TRANSLATIONS.uz
-        bot.sendMessage(chatId, t.offlineMode)
-      }
     } else {
-      logger.info("New user registration started", { chatId })
-
       // User doesn't exist, start with language selection
       showLanguageSelection(chatId)
     }
   } catch (error) {
-    logger.error("Start command error", { error: error.message, chatId })
-
     const t = TRANSLATIONS.uz // Default to Uzbek for error messages
     bot.sendMessage(chatId, t.registrationError)
     userStates.set(chatId, { state: STATES.WAITING_NAME })
@@ -617,7 +585,7 @@ bot.onText(/\/help/, async (msg) => {
   // Try to get user's language preference
   let userLanguage = "uz"
   try {
-    const existingUser = localStorage.findUser(chatId) || (await apiClient.checkUserExists(chatId).catch(() => null))
+    const existingUser = await apiClient.checkUserExists(chatId).catch(() => null)
     if (existingUser && existingUser.language) {
       userLanguage = existingUser.language
     }
@@ -629,110 +597,27 @@ bot.onText(/\/help/, async (msg) => {
   bot.sendMessage(chatId, t.helpText)
 })
 
-bot.onText(/\/status/, async (msg) => {
-  const chatId = msg.chat.id
-
-  // Try to get user's language preference
-  let userLanguage = "uz"
-  try {
-    const existingUser = localStorage.findUser(chatId) || (await apiClient.checkUserExists(chatId).catch(() => null))
-    if (existingUser && existingUser.language) {
-      userLanguage = existingUser.language
-    }
-  } catch (error) {
-    // Default to Uzbek if can't determine language
-  }
-
-  const apiStatus = apiClient.getStatus()
-  const userCount = localStorage.readUsers().length
-  const messageCount = localStorage.readMessages().length
-  const syncStatus = syncManager.getStatus()
-  const time = new Date().toLocaleString(userLanguage === "ru" ? "ru-RU" : "uz-UZ")
-
-  const t = TRANSLATIONS[userLanguage] || TRANSLATIONS.uz
-  const statusText = t.statusText(apiStatus, userCount, messageCount, syncStatus, isOfflineMode, time)
-
-  bot.sendMessage(chatId, statusText)
-})
-
-bot.onText(/\/admin/, async (msg) => {
-  const chatId = msg.chat.id
-
-  // Try to get user's language preference
-  let userLanguage = "uz"
-  try {
-    const existingUser = localStorage.findUser(chatId) || (await apiClient.checkUserExists(chatId).catch(() => null))
-    if (existingUser && existingUser.language) {
-      userLanguage = existingUser.language
-    }
-  } catch (error) {
-    // Default to Uzbek if can't determine language
-  }
-
-  const t = TRANSLATIONS[userLanguage] || TRANSLATIONS.uz
-
-  // You can add your admin chat ID here
-  const adminChatIds = [chatId] // For now, allow the current user
-
-  if (!adminChatIds.includes(chatId)) {
-    bot.sendMessage(chatId, t.adminOnly)
-    return
-  }
-
-  const users = localStorage.readUsers()
-  const messages = localStorage.readMessages()
-  const apiStatus = apiClient.getStatus()
-
-  const recentUsers = users
-    .slice(-5)
-    .map((user) => `• ${user.fullName} (${user.course})`)
-    .join("\n") || t.noUsers
-
-  const recentMessages = messages
-    .slice(-3)
-    .map((msg) => `• ${msg.ticketType}: ${msg.text.substring(0, 50)}...`)
-    .join("\n") || t.noMessages
-
-  const adminText = t.adminText(users.length, messages.length, apiStatus, isOfflineMode, recentUsers, recentMessages)
-
-  bot.sendMessage(chatId, adminText)
-})
-
 bot.onText(/\/menu/, async (msg) => {
   const chatId = msg.chat.id
 
   try {
-    let existingUser = null
-
-    // Try API first, then local storage
-    try {
-      existingUser = await ErrorHandler.retryOperation(() => apiClient.checkUserExists(chatId), 2, 1000)
-      isOfflineMode = false
-    } catch (apiError) {
-      logger.warn("API unavailable for menu command", { error: apiError.message })
-      existingUser = localStorage.findUser(chatId)
-      isOfflineMode = true
-    }
+    const existingUser = await apiClient.checkUserExists(chatId).catch(() => null)
 
     if (existingUser) {
       const userLanguage = existingUser.language || "uz"
       showMainMenu(chatId, existingUser.fullName, userLanguage)
       userStates.set(chatId, { state: STATES.IDLE, fullName: existingUser.fullName, language: userLanguage })
-
-      if (isOfflineMode) {
-        const t = TRANSLATIONS[userLanguage] || TRANSLATIONS.uz
-        bot.sendMessage(chatId, t.offlineModeMenu)
-      }
     } else {
       const t = TRANSLATIONS.uz // Default to Uzbek for new users
       bot.sendMessage(chatId, t.pleaseRegister)
     }
   } catch (error) {
-    logger.error("Menu command error", { error: error.message, chatId })
     const t = TRANSLATIONS.uz // Default to Uzbek for error messages
     bot.sendMessage(chatId, t.menuError)
   }
 })
+
+
 
 // Handle text messages for registration flow
 bot.on("message", async (msg) => {
@@ -749,7 +634,7 @@ bot.on("message", async (msg) => {
     return
   }
 
-  logger.info(`Processing message in state: ${userState.state}`, { chatId, text: text?.substring(0, 50) })
+
 
   try {
     switch (userState.state) {
@@ -808,12 +693,9 @@ bot.on("message", async (msg) => {
         break
 
       default:
-        const existingUser =
-          localStorage.findUser(chatId) || (await apiClient.checkUserExists(chatId).catch(() => null))
+        const existingUser = await apiClient.checkUserExists(chatId).catch(() => null)
         if (existingUser) {
           const userLanguage = existingUser.language || "uz"
-          const t = TRANSLATIONS[userLanguage] || TRANSLATIONS.uz
-          bot.sendMessage(chatId, t.useMenu)
           showMainMenu(chatId, existingUser.fullName, userLanguage)
         } else {
           const t = TRANSLATIONS.uz // Default to Uzbek for new users
@@ -822,28 +704,25 @@ bot.on("message", async (msg) => {
         break
     }
   } catch (error) {
-    logger.error("Message handling error", { error: error.message, chatId, state: userState.state })
     const t = TRANSLATIONS.uz // Default to Uzbek for error messages
     bot.sendMessage(chatId, t.menuError)
     userStates.delete(chatId)
   }
 })
 
-// Handle callback queries (inline button presses)
+
 bot.on("callback_query", async (callbackQuery) => {
   const chatId = callbackQuery.message.chat.id
   const data = callbackQuery.data
   const messageId = callbackQuery.message.message_id
 
-  logger.info("Callback query received", { chatId, data })
 
-  // Answer the callback query to remove loading state
+
   bot.answerCallbackQuery(callbackQuery.id)
 
   const userState = userStates.get(chatId) || { state: STATES.IDLE }
 
   try {
-    // Handle language selection
     if (data.startsWith("lang_")) {
       const language = data.replace("lang_", "")
       userState.language = language
@@ -861,7 +740,6 @@ bot.on("callback_query", async (callbackQuery) => {
       return
     }
 
-    // Handle course selection
     if (data.startsWith("course_")) {
       const courseNumber = data.replace("course_", "")
       const language = userState.language || "uz"
@@ -935,7 +813,6 @@ bot.on("callback_query", async (callbackQuery) => {
 
         userStates.set(chatId, userState)
 
-        // Wait a bit then complete registration and delete the message
         setTimeout(async () => {
           await completeRegistration(chatId, userState)
           // Delete the "yakunlanmoqda" message
@@ -1004,16 +881,15 @@ bot.on("callback_query", async (callbackQuery) => {
       const categoryData = categoryMap[data]
       const category = language === "ru" ? categoryData.ru : categoryData.uz
       const substatus = categoryData.en
-      const description = getCategoryDescription(category, language)
 
       userState.category = category
       userState.substatus = substatus
 
-      const translatedType = t.messageTypes[userState.ticketType] || userState.ticketType
-      const messageText = t.enterMessage(translatedType)
+      // Get category-specific message based on selected category
+      const categorySpecificMessage = getCategorySpecificMessage(data, language)
 
       bot.editMessageText(
-        `✅ Kategoriya: ${category}\n\n${messageText}`,
+        categorySpecificMessage,
         {
           chat_id: chatId,
           message_id: messageId,
@@ -1028,7 +904,11 @@ bot.on("callback_query", async (callbackQuery) => {
     if (data === "help_info") {
       const language = userState.language || "uz"
       const t = TRANSLATIONS[language] || TRANSLATIONS.uz
-      const helpText = `${t.help}\n\n${t.helpText}\n\n🔄 ${t.useMenu}`
+      const helpText = `${t.help}
+
+${t.helpText}
+
+🔄 ${t.useMenu}`
 
       bot.editMessageText(helpText, {
         chat_id: chatId,
@@ -1042,7 +922,7 @@ bot.on("callback_query", async (callbackQuery) => {
 
     // Handle back to menu
     if (data === "back_to_menu") {
-      const existingUser = localStorage.findUser(chatId) || (await apiClient.checkUserExists(chatId).catch(() => null))
+      const existingUser = await apiClient.checkUserExists(chatId).catch(() => null)
       if (existingUser) {
         const userLanguage = existingUser.language || "uz"
         const t = TRANSLATIONS[userLanguage] || TRANSLATIONS.uz
@@ -1066,7 +946,6 @@ bot.on("callback_query", async (callbackQuery) => {
       return
     }
   } catch (error) {
-    logger.error("Callback query error", { error: error.message, chatId, data })
     const t = TRANSLATIONS.uz // Default to Uzbek for error messages
     bot.sendMessage(chatId, t.callbackError)
   }
@@ -1077,22 +956,21 @@ async function handleMessageSubmission(chatId, userState, messageText) {
     const ticketNumber = `USAT-${Date.now().toString().slice(-6)}`
 
     const priority = determinePriority(userState.category, messageText)
-    const messageId = Date.now() // Generate unique messageId
+    const messageId = Date.now() 
 
     const messageData = {
       messageId: messageId,
-      userId: chatId, // Add userId field (same as chatId for consistency)
+      userId: chatId, 
       chatId: chatId,
       timestamp: new Date().toISOString(),
       status: "pending",
-      ticketType: userState.ticketType, // suggestion or complaint (English for API)
+      ticketType: userState.ticketType, 
       text: messageText,
       language: userState.language || "uz",
       isactive: false,
-      substatus: userState.ticketType === "suggestion" ? null : userState.substatus, // null for suggestions, category for complaints
+      substatus: userState.ticketType === "suggestion" ? null : userState.substatus,
     }
 
-    // Console'da API'ga jo'natilayotgan datani ko'rsatish
     console.log("=== TAKLIF/SHIKOYAT API'GA JO'NATILAYOTGAN DATA ===")
     console.log("Ticket Type:", userState.ticketType)
     console.log("Full Data:", JSON.stringify(messageData, null, 2))
@@ -1100,7 +978,6 @@ async function handleMessageSubmission(chatId, userState, messageText) {
 
     let result = null
 
-    // Faqat API'ga jo'natish
     try {
       result = await ErrorHandler.retryOperation(() => apiClient.saveMessage(messageData), 2, 2000)
       console.log("✅ API'ga muvaffaqiyatli jo'natildi!")
@@ -1117,7 +994,6 @@ async function handleMessageSubmission(chatId, userState, messageText) {
       const statusMessage = t.messageSubmitted(translatedType)
       bot.sendMessage(chatId, statusMessage)
 
-      // Return to main menu
       setTimeout(() => {
         showMainMenu(chatId, userState.fullName, userState.language)
         userStates.set(chatId, { state: STATES.IDLE, fullName: userState.fullName, language: userState.language })
@@ -1129,7 +1005,7 @@ async function handleMessageSubmission(chatId, userState, messageText) {
     }
   } catch (error) {
     logger.error("Message submission error", { error: error.message, chatId })
-    const t = TRANSLATIONS.uz // Default to Uzbek for error messages
+    const t = TRANSLATIONS.uz 
     bot.sendMessage(chatId, t.messageError)
   }
 }
@@ -1153,7 +1029,7 @@ function determinePriority(category, messageText) {
 
 async function completeRegistration(chatId, userState) {
   const userData = {
-    userId: chatId, // Use chatId as userId for consistency
+    userId: chatId, 
     chatId: chatId,
     fullName: userState.fullName,
     phone: userState.phone,
@@ -1161,7 +1037,6 @@ async function completeRegistration(chatId, userState) {
     direction: userState.direction,
     language: userState.language || "uz",
     lastActivity: new Date().toISOString(),
-    synced: false, // Add sync flag
   }
 
   console.log("[v0] User registration data being sent to API:", JSON.stringify(userData, null, 2))
@@ -1169,53 +1044,27 @@ async function completeRegistration(chatId, userState) {
   try {
     let result = null
 
-    // Try API first
-    if (!isOfflineMode) {
-      try {
-        console.log("[v0] Attempting API registration call...")
-        result = await ErrorHandler.retryOperation(() => apiClient.registerUser(userData), 2, 2000)
-        userData.synced = true // Mark as synced if API call succeeds
-        console.log("[v0] API registration successful:", result)
-      } catch (apiError) {
-        console.log("[v0] API registration failed:", apiError.message)
-        logger.warn("API registration failed, saving locally", { error: apiError.message })
-        isOfflineMode = true
-      }
-    }
-
-    // Fallback to local storage
-    if (isOfflineMode || !result) {
-      result = localStorage.saveUser(userData)
-      logger.info("User saved to local storage", { fullName: userData.fullName })
+    try {
+      console.log("[v0] Attempting API registration call...")
+      result = await ErrorHandler.retryOperation(() => apiClient.registerUser(userData), 2, 2000)
+      console.log("[v0] API registration successful:", result)
+    } catch (apiError) {
+      console.log("[v0] API registration failed:", apiError.message)
+      throw apiError
     }
 
     if (result) {
       const language = userState.language || "uz"
       const t = TRANSLATIONS[language] || TRANSLATIONS.uz
-      const successMessage = isOfflineMode
-        ? t.registrationCompleteOffline
-        : t.registrationComplete
+      const successMessage = t.registrationComplete
 
       bot.sendMessage(chatId, successMessage)
       showMainMenu(chatId, userState.fullName, language)
-      // Ensure reply keyboard is visible after success as well
-      try {
-        const tLang = TRANSLATIONS[language] || TRANSLATIONS.uz
-        bot.sendMessage(chatId, tLang.sendKeyboardHint, {
-          reply_markup: {
-            keyboard: [[{ text: tLang.sendMessageButton }]],
-            resize_keyboard: true,
-            one_time_keyboard: false,
-            selective: false,
-          },
-        })
-      } catch (_) {}
       userStates.set(chatId, { state: STATES.IDLE, fullName: userState.fullName, language: language })
     }
   } catch (error) {
-    logger.error("Registration error", { error: error.message, chatId })
     const errorInfo = ErrorHandler.handleAPIError(error, "User registration")
-    const t = TRANSLATIONS.uz // Default to Uzbek for error messages
+    const t = TRANSLATIONS.uz 
     bot.sendMessage(chatId, `${t.errorOccurred} ${errorInfo.userMessage}`)
 
     if (errorInfo.errorType !== "DUPLICATE") {
@@ -1225,48 +1074,34 @@ async function completeRegistration(chatId, userState) {
   }
 }
 
-// Error handling for bot polling
 bot.on("polling_error", (error) => {
-  logger.error("Polling error", { error: error.message })
+  console.error("Polling error:", error.message)
 })
 
-// Graceful shutdown
 process.on("SIGINT", () => {
-  logger.info("Received SIGINT, shutting down gracefully...")
-  syncManager.stop()
+  console.log("Received SIGINT, shutting down gracefully...")
   process.exit(0)
 })
 
 process.on("SIGTERM", () => {
-  logger.info("Received SIGTERM, shutting down gracefully...")
-  syncManager.stop()
+  console.log("Received SIGTERM, shutting down gracefully...")
   process.exit(0)
 })
 
-// Initialize bot
 async function initializeBot() {
-  logger.info("Initializing bot...")
-  logger.info(`API Base URL: ${API_BASE_URL}`)
-  logger.info(`Bot Token: ${token ? "Set" : "Missing"}`)
-
-  // Initialize local storage
-  logger.info("📁 Local storage initialized")
+  console.log("Initializing bot...")
+  console.log(`API Base URL: ${API_BASE_URL}`)
+  console.log(`Bot Token: ${token ? "Set" : "Missing"}`)
 
   const isHealthy = await apiClient.healthCheck()
   if (!isHealthy) {
-    logger.warn("⚠️ API health check failed - bot will run in offline mode")
-    logger.warn("Please check if the API server is running and accessible")
-    isOfflineMode = true
+    console.warn("⚠️ API health check failed - bot will run in API-only mode")
+    console.warn("Please check if the API server is running and accessible")
   } else {
-    logger.info("✅ API health check passed - online mode")
-    isOfflineMode = false
-
-    // Start sync manager if API is available
-    syncManager.start(5) // Sync every 5 minutes
+    console.log("✅ API health check passed - online mode")
   }
 
-  logger.info("🤖 Bot started successfully!")
-  logger.info(`Mode: ${isOfflineMode ? "Offline" : "Online"}`)
+  console.log("🤖 Bot started successfully!")
 }
 
 initializeBot()
